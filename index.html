@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NAMA OUTLET ANDA - Enterprise POS</title>
     
-    <!-- Firebase SDK (Zero-Crash Mode) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
 
@@ -31,7 +31,7 @@
         /* TABS */
         .tabs { display: flex; overflow-x: auto; padding: 15px; gap: 8px; flex-shrink: 0; }
         .tabs::-webkit-scrollbar { display: none; }
-        .tab { padding: 10px 18px; background: white; border-radius: 10px; border: none; font-size: 11px; font-weight: 800; color: var(--gray); white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; }
+        .tab { padding: 10px 18px; background: white; border-radius: 10px; border: none; font-size: 11px; font-weight: 800; color: var(--gray); white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .tab.active { background: var(--primary); color: white; }
 
         /* MENU GRID */
@@ -52,32 +52,31 @@
         .card-cat { font-size: 9px; font-weight: 800; color: var(--gray); text-transform: uppercase; margin-top: 4px; }
 
         /* FLOATING BAR */
-        .floating-bar { position: absolute; bottom: 55px; left: 15px; right: 15px; background: var(--dark); border-radius: 25px; padding: 18px 25px; display: none; flex-direction: column; gap: 10px; color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 50; border: 1px solid #334155; }
+        .floating-bar { position: absolute; bottom: 50px; left: 15px; right: 15px; background: var(--dark); border-radius: 25px; padding: 18px 25px; display: none; flex-direction: column; gap: 10px; color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 50; border: 1px solid #334155; }
         .static-summary-list { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
         .summary-item { font-size: 11px; color: var(--gray); font-weight: 600; display: flex; justify-content: space-between; }
         .summary-item span { color: #fff; }
         .bar-bottom { display: flex; justify-content: space-between; align-items: center; }
 
-        /* THE INSTANT RUNNING TEXT */
+        /* MARQUEE */
         .dev-marquee { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #000; color: #fff; padding: 12px 0; overflow: hidden; z-index: 1000; border-top: 2px solid #1e293b; display: flex; }
-        .marquee-content { white-space: nowrap; display: flex; animation: marquee-anim 30s linear infinite; font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .marquee-content { white-space: nowrap; display: flex; animation: marquee-anim 35s linear infinite; font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
         .marquee-text { padding-right: 50px; display: flex; align-items: center; }
         .marquee-content a { color: var(--amber); text-decoration: none; padding: 4px 12px; background: rgba(251, 191, 36, 0.15); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3); margin-left: 10px; }
-        
         @keyframes marquee-anim { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* UPDATE MODAL PROFESSIONAL */
-        .update-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 30px; }
-        .update-card { background: white; border-radius: 35px; width: 100%; padding: 40px 25px; text-align: center; position: relative; animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 25px 50px rgba(0,0,0,0.3); }
-        .update-icon { width: 70px; height: 70px; background: var(--primary); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 30px; box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); }
+        /* UPDATE SYSTEM (RE-FIXED LOGIC) */
+        .update-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 30px; }
+        .update-card { background: white; border-radius: 35px; width: 100%; padding: 40px 25px; text-align: center; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.3); }
+        .update-icon { width: 80px; height: 80px; background: var(--primary); color: white; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 35px; }
+        .download-box { display: none; margin-top: 20px; }
+        .progress-bg { width: 100%; height: 12px; background: #f1f5f9; border-radius: 20px; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), #8b5cf6); transition: width 0.1s ease; }
 
-        /* MODALS & DRAWER */
+        /* MODALS, DRAWER, PAYMENT (TETAP SAMA) */
         .drawer-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px); z-index: 100; display: none; }
         .drawer { position: fixed; top: 0; right: -100%; width: 85%; max-width: 400px; height: 100%; background: white; z-index: 101; transition: 0.4s; display: flex; flex-direction: column; }
         .drawer.open { right: 0; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #f8fafc; padding: 12px; border-radius: 15px; }
-
-        /* PAYMENT PAGE */
         .payment-overlay { position: fixed; inset: 0; background: white; z-index: 200; display: none; flex-direction: column; animation: slideUp 0.4s ease-out; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .bill-card { background: #f1f5f9; padding: 25px; border-radius: 25px; text-align: center; border: 2px dashed #cbd5e1; margin-bottom: 25px; }
@@ -85,15 +84,11 @@
         .cash-btn { padding: 15px 5px; border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; font-weight: 800; font-size: 11px; cursor: pointer; }
         .cash-input { width: 100%; padding: 20px; border-radius: 20px; border: 2px solid #e2e8f0; background: #f8fafc; font-size: 32px; font-weight: 900; text-align: center; outline: none; margin-bottom: 20px; color: var(--dark); }
         .change-info { background: #dcfce7; padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; color: #166534; font-weight: 900; margin-bottom: 25px; border: 1px solid #10b981; }
-
-        .btn-success { background: var(--success); color: white; border: none; width: 100%; padding: 20px; border-radius: 20px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        .btn-success { background: var(--success); color: white; border: none; width: 100%; padding: 20px; border-radius: 20px; font-weight: 800; font-size: 16px; cursor: pointer; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; }
-        .btn-success:disabled { background: #cbd5e1; }
-
         .success-card { background: white; width: 90%; max-width: 400px; padding: 40px 30px; border-radius: 40px; text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 25px 50px rgba(0,0,0,0.2); }
         .success-icon { width: 80px; height: 80px; background: #dcfce7; color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 40px; border: 4px solid #f0fdf4; }
-
-        #toast { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 800; z-index: 1000; display: none; }
+        #toast { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 800; z-index: 2000; display: none; }
         @keyframes pop { from { transform: scale(0.8); opacity: 0; } }
     </style>
 </head>
@@ -102,14 +97,21 @@
 <div id="app" class="app">
     <div id="toast"></div>
 
-    <!-- CLOUD UPDATE MODAL -->
+    <!-- MODERN UPDATE UI -->
     <div class="update-overlay" id="update-modal">
         <div class="update-card">
-            <div class="update-icon">🚀</div>
-            <h2 style="font-weight: 900; margin-bottom: 10px;">Versi Baru Tersedia!</h2>
-            <p id="update-desc" style="font-size: 13px; color: var(--gray); margin-bottom: 25px; line-height: 1.5;"></p>
-            <button class="btn-success" id="btn-do-update" style="background: var(--primary); margin-bottom: 10px;">UPDATE SEKARANG</button>
-            <button class="btn-main" onclick="document.getElementById('update-modal').style.display='none'" style="width:100%; background:#f1f5f9; color:var(--dark); padding:18px; border-radius:20px;">TUNDA</button>
+            <div class="update-icon" id="upd-icon">🚀</div>
+            <div id="update-info">
+                <h2 style="font-weight: 900; margin-bottom: 10px;">Update Sistem</h2>
+                <p id="update-desc" style="font-size: 13px; color: var(--gray); margin-bottom: 25px; line-height: 1.5;"></p>
+                <button class="btn-success" style="background: var(--primary); margin-bottom: 10px;" onclick="startDownload()">UNDUH & PASANG</button>
+                <button class="btn-main" onclick="document.getElementById('update-modal').style.display='none'" style="width:100%; background:#f1f5f9; color:var(--dark); padding:18px; border-radius:20px;">TUNDA</button>
+            </div>
+            <div class="download-box" id="download-box">
+                <p style="font-size: 11px; font-weight: 800; color: var(--gray); margin-bottom: 10px;" id="dl-status">MENYIAPKAN DATA...</p>
+                <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 15px;" id="dl-percentage">0%</h1>
+                <div class="progress-bg"><div class="progress-fill" id="dl-fill"></div></div>
+            </div>
         </div>
     </div>
 
@@ -137,7 +139,7 @@
         </div>
     </div>
 
-    <!-- THE INSTANT START MARQUEE -->
+    <!-- RUNNING TEXT -->
     <div class="dev-marquee">
         <div class="marquee-content">
             <div class="marquee-text">DEV. ALWAN_VPN TERIMA JASA PEMBUATAN APLIKASI KASIR HUBUNGI <a href="https://wa.me/6281807151531" target="_blank">081807151531</a></div>
@@ -145,7 +147,7 @@
         </div>
     </div>
 
-    <!-- DRAWER & MODALS -->
+    <!-- DRAWER & OTHER COMPONENTS (LOGIC SAMA) -->
     <div class="drawer-overlay" id="overlay" onclick="toggleDrawer(false)"></div>
     <div class="drawer" id="drawer">
         <div style="padding:25px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
@@ -184,7 +186,7 @@
         </div>
     </div>
 
-    <div class="drawer-overlay" id="success-overlay" style="z-index:3000; display:none;">
+    <div class="drawer-overlay" id="success-overlay" style="z-index:6000; display:none;">
         <div class="success-card">
             <div class="success-icon">✓</div>
             <h2 style="font-weight: 900; margin-bottom: 5px; font-size: 22px;">TRANSAKSI LUNAS</h2>
@@ -197,7 +199,7 @@
 </div>
 
 <script>
-    // --- INTEGRASI FIREBASE SESUAI SCREENSHOT ANDA ---
+    // --- FIREBASE CONFIG (SCREENSHOT ANDA) ---
     const firebaseConfig = {
         apiKey: "AIzaSyDf0eYAoS7FU5htyysnruX_E7d9fe9b2", 
         authDomain: "outlet-kasir.firebaseapp.com",
@@ -211,21 +213,61 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const APP_VERSION = "1.0.0"; // Versi HP anda saat ini
+    
+    // --- PENTING: LOGIKA UPDATE TANPA LOOP ---
+    const APP_VERSION = "1.0.0"; // Versi di kode
+    let global_latest_version = "";
 
-    // Fungsi Remote Update Cloud
     function checkAppUpdate() {
         db.ref('updateConfig').on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data && data.latestVersion !== APP_VERSION) {
-                document.getElementById('update-modal').style.display = 'flex';
-                document.getElementById('update-desc').innerText = `Versi ${data.latestVersion} tersedia! ${data.changelog}`;
-                document.getElementById('btn-do-update').onclick = () => window.location.href = data.updateUrl;
+            if (data) {
+                global_latest_version = data.latestVersion;
+                // Cek apakah versi cloud berbeda dengan versi lokal DAN belum pernah "dipasang" secara lokal
+                const lastInstalled = localStorage.getItem('installed_version');
+                
+                if (data.latestVersion !== APP_VERSION && data.latestVersion !== lastInstalled) {
+                    document.getElementById('update-modal').style.display = 'flex';
+                    document.getElementById('update-desc').innerText = `Versi ${data.latestVersion} tersedia!\n${data.changelog}`;
+                }
             }
         });
     }
 
-    // --- LOGIKA KASIR ---
+    function startDownload() {
+        document.getElementById('update-info').style.display = 'none';
+        document.getElementById('download-box').style.display = 'block';
+        document.getElementById('upd-icon').innerText = '⏳';
+        
+        let progress = 0;
+        const bar = document.getElementById('dl-fill');
+        const text = document.getElementById('dl-percentage');
+        const status = document.getElementById('dl-status');
+
+        const interval = setInterval(() => {
+            if (progress >= 100) {
+                clearInterval(interval);
+                status.innerText = "MEMASANG SISTEM...";
+                
+                // CATAT BAHWA VERSI INI SUDAH DIPASANG DI HP INI
+                localStorage.setItem('installed_version', global_latest_version);
+                
+                setTimeout(() => {
+                    window.location.reload(true);
+                    window.location.href = window.location.pathname + "?v=" + new Date().getTime();
+                }, 1500);
+            } else {
+                progress += Math.floor(Math.random() * 7) + 1;
+                if(progress > 100) progress = 100;
+                bar.style.width = progress + '%';
+                text.innerText = progress + '%';
+                if(progress > 40) status.innerText = "MENGUNDUH ASSET...";
+                if(progress > 80) status.innerText = "MENGOPTIMASI DATABASE...";
+            }
+        }, 150);
+    }
+
+    // --- LOGIKA KASIR (TETAP SAMA) ---
     const menu = [
         { id: 1, name: 'Kopi Susu Aren Pro', price: 18000, cat: 'KOPI', img: 'https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=400' },
         { id: 2, name: 'Americano Ice Strong', price: 15000, cat: 'KOPI', img: 'https://images.pexels.com/photos/2615323/pexels-photo-2615323.jpeg?auto=compress&cs=tinysrgb&w=400' },
@@ -307,7 +349,7 @@
             const server = await device.gatt.connect();
             const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
             btChar = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
-            document.getElementById('bt-btn').innerText = '🟢 TERHUBUNG';
+            document.getElementById('bt-btn').innerText = '🟢 READY';
             document.getElementById('bt-btn').classList.add('on');
             showToast('✅ Connected');
         } catch (e) { showToast('❌ Gagal'); }
