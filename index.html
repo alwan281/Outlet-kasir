@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NAMA OUTLET ANDA - Enterprise POS</title>
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.1/firebase-database-compat.js"></script>
+    <!-- Firebase SDK (Standard Stability) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <style>
         :root {
@@ -15,81 +15,82 @@
             --bg: #f1f5f9; --text: #1e293b; --gray: #94a3b8; --amber: #fbbf24;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: #1e293b; display: flex; justify-content: center; overflow: hidden; height: 100vh; }
-
-        .app { width: 100%; max-width: 480px; height: 100vh; background: var(--bg); position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--dark); display: flex; justify-content: center; overflow: hidden; height: 100vh; }
+        .app { width: 100%; max-width: 480px; height: 100vh; background: var(--bg); position: relative; display: flex; flex-direction: column; }
 
         /* HEADER */
-        header { padding: 25px 20px; background: var(--dark); color: white; border-radius: 0 0 25px 25px; flex-shrink: 0; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        header { padding: 25px 20px; background: var(--dark); color: white; border-radius: 0 0 25px 25px; flex-shrink: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 100; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .logo { font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-        .bt-btn { font-size: 10px; padding: 8px 14px; border-radius: 50px; background: #334155; color: white; border: 1px solid #475569; cursor: pointer; font-weight: 800; }
+        
+        .bt-btn { font-size: 10px; padding: 8px 14px; border-radius: 50px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-weight: 800; }
         .bt-btn.on { background: var(--success); border: none; }
-        .search-input { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #334155; color: white; outline: none; font-size: 14px; }
 
-        /* TABS */
-        .tabs { display: flex; overflow-x: auto; padding: 15px; gap: 8px; flex-shrink: 0; }
+        .search-box { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #1e293b; color: white; outline: none; font-size: 14px; border: 1px solid #334155; }
+
+        /* TABS & GRID */
+        .tabs { display: flex; overflow-x: auto; padding: 15px 15px 5px; gap: 8px; flex-shrink: 0; }
         .tabs::-webkit-scrollbar { display: none; }
         .tab { padding: 10px 18px; background: white; border-radius: 10px; border: none; font-size: 11px; font-weight: 800; color: var(--gray); white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .tab.active { background: var(--primary); color: white; }
 
-        /* MENU GRID */
-        #menu-grid { flex: 1; overflow-y: auto; padding: 0 15px 220px 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; height: 230px; position: relative; display: flex; flex-direction: column; transition: 0.2s; }
-        .img-box { width: 100%; height: 130px; background: #eee; position: relative; }
+        #menu-grid { flex: 1; overflow-y: auto; padding: 10px 15px 320px 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; height: 230px; position: relative; display: flex; flex-direction: column; }
+        .img-box { width: 100%; height: 140px; background: #eee; position: relative; }
         .card img { width: 100%; height: 100%; object-fit: cover; }
         
-        .qty-overlay { position: absolute; inset: 0; background: rgba(79, 70, 229, 0.85); backdrop-filter: blur(4px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 10px; color: white; animation: fadeIn 0.2s; z-index: 5; }
+        /* Cerdas Overlay */
+        .qty-overlay { position: absolute; inset: 0; background: rgba(79, 70, 229, 0.92); backdrop-filter: blur(4px); display: none; flex-direction: column; justify-content: center; align-items: center; gap: 10px; color: white; z-index: 5; }
         .qty-overlay.show { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
         .qty-controls { display: flex; align-items: center; gap: 15px; }
-        .q-btn { background: white; color: var(--primary); border: none; width: 35px; height: 35px; border-radius: 10px; font-size: 20px; font-weight: 900; cursor: pointer; }
-        .price-badge { position: absolute; top: 8px; right: 8px; background: white; padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 900; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .card-info { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .card-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 2px; }
-        .card-cat { font-size: 9px; font-weight: 800; color: var(--gray); text-transform: uppercase; margin-top: 4px; }
+        .q-btn { background: white; color: var(--primary); border: none; width: 35px; height: 35px; border-radius: 10px; font-size: 22px; font-weight: 900; }
 
-        /* FLOATING BAR */
-        .floating-bar { position: absolute; bottom: 50px; left: 15px; right: 15px; background: var(--dark); border-radius: 25px; padding: 18px 25px; display: none; flex-direction: column; gap: 10px; color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 50; border: 1px solid #334155; }
-        .static-summary-list { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
-        .summary-item { font-size: 11px; color: var(--gray); font-weight: 600; display: flex; justify-content: space-between; }
-        .summary-item span { color: #fff; }
+        .price-badge { position: absolute; top: 10px; right: 10px; background: white; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 900; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .card-info { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .card-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; }
+
+        /* BILLING SUMMARY (STATIC VERTICAL) */
+        .floating-bar { position: fixed; bottom: 55px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 440px; background: var(--dark); border-radius: 25px; padding: 18px 25px; display: none; flex-direction: column; color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 100; border: 1px solid #334155; }
+        .summary-list { max-height: 75px; overflow-y: auto; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 4px; }
+        .summary-item { font-size: 11px; color: var(--gray); display: flex; justify-content: space-between; font-weight: 600; }
+        .summary-item b { color: white; }
+
         .bar-bottom { display: flex; justify-content: space-between; align-items: center; }
 
-        /* MARQUEE */
-        .dev-marquee { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #000; color: #fff; padding: 12px 0; overflow: hidden; z-index: 1000; border-top: 2px solid #1e293b; display: flex; }
-        .marquee-content { white-space: nowrap; display: flex; animation: marquee-anim 35s linear infinite; font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
-        .marquee-text { padding-right: 50px; display: flex; align-items: center; }
-        .marquee-content a { color: var(--amber); text-decoration: none; padding: 4px 12px; background: rgba(251, 191, 36, 0.15); border-radius: 8px; border: 1px solid rgba(251, 191, 36, 0.3); margin-left: 10px; }
-        @keyframes marquee-anim { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        /* MODALS */
+        .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 25px; }
+        .modal-card { background: white; border-radius: 35px; width: 100%; max-width: 400px; padding: 35px 25px; text-align: center; animation: pop 0.3s ease; }
+        @keyframes pop { from { transform: scale(0.9); opacity: 0; } }
 
-        /* UPDATE SYSTEM (RE-FIXED LOGIC) */
-        .update-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 30px; }
-        .update-card { background: white; border-radius: 35px; width: 100%; padding: 40px 25px; text-align: center; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.3); }
-        .update-icon { width: 80px; height: 80px; background: var(--primary); color: white; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 35px; }
-        .download-box { display: none; margin-top: 20px; }
-        .progress-bg { width: 100%; height: 12px; background: #f1f5f9; border-radius: 20px; overflow: hidden; }
-        .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), #8b5cf6); transition: width 0.1s ease; }
-
-        /* MODALS, DRAWER, PAYMENT (TETAP SAMA) */
-        .drawer-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px); z-index: 100; display: none; }
-        .drawer { position: fixed; top: 0; right: -100%; width: 85%; max-width: 400px; height: 100%; background: white; z-index: 101; transition: 0.4s; display: flex; flex-direction: column; }
-        .drawer.open { right: 0; }
-        .payment-overlay { position: fixed; inset: 0; background: white; z-index: 200; display: none; flex-direction: column; animation: slideUp 0.4s ease-out; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .bill-card { background: #f1f5f9; padding: 25px; border-radius: 25px; text-align: center; border: 2px dashed #cbd5e1; margin-bottom: 25px; }
+        /* PAYMENT PAGE */
+        .payment-overlay { position: fixed; inset: 0; background: white; z-index: 3000; display: none; flex-direction: column; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); } }
+        .pay-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; background: var(--dark); color: white; }
+        .bill-card { background: #f8fafc; padding: 25px; border-radius: 25px; text-align: center; border: 2px dashed #cbd5e1; margin-bottom: 20px; }
+        .cash-input { width: 100%; padding: 20px; border-radius: 20px; border: 2px solid #e2e8f0; background: #f8fafc; font-size: 32px; font-weight: 900; text-align: center; outline: none; margin-bottom: 20px; color: var(--dark); }
         .quick-cash { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
         .cash-btn { padding: 15px 5px; border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; font-weight: 800; font-size: 11px; cursor: pointer; }
-        .cash-input { width: 100%; padding: 20px; border-radius: 20px; border: 2px solid #e2e8f0; background: #f8fafc; font-size: 32px; font-weight: 900; text-align: center; outline: none; margin-bottom: 20px; color: var(--dark); }
         .change-info { background: #dcfce7; padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; color: #166534; font-weight: 900; margin-bottom: 25px; border: 1px solid #10b981; }
+
         .btn-success { background: var(--success); color: white; border: none; width: 100%; padding: 20px; border-radius: 20px; font-weight: 800; font-size: 16px; cursor: pointer; }
-        .btn-main { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; }
-        .success-card { background: white; width: 90%; max-width: 400px; padding: 40px 30px; border-radius: 40px; text-align: center; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 25px 50px rgba(0,0,0,0.2); }
-        .success-icon { width: 80px; height: 80px; background: #dcfce7; color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 40px; border: 4px solid #f0fdf4; }
-        #toast { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 800; z-index: 2000; display: none; }
-        @keyframes pop { from { transform: scale(0.8); opacity: 0; } }
+        .btn-success:disabled { background: #cbd5e1; }
+
+        /* MARQUEE FIXED */
+        .dev-marquee { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: #000; color: #fff; padding: 12px 0; overflow: hidden; z-index: 1001; display: flex; border-top: 2px solid #1e293b; }
+        .marquee-content { white-space: nowrap; display: flex; animation: marquee-anim 35s linear infinite; font-size: 13px; font-weight: 800; text-transform: uppercase; }
+        .marquee-text { padding-right: 50px; }
+        .marquee-content a { color: var(--amber); text-decoration: none; padding: 2px 8px; background: rgba(251,191,36,0.1); border-radius: 5px; }
+        @keyframes marquee-anim { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* PRINT VIEW (SYSTEM) */
+        #receipt-print { display: none; }
+        @media print {
+            .no-print { display: none !important; }
+            #receipt-print { display: block !important; width: 58mm; font-family: monospace; color: black; font-size: 12px; padding: 5px; }
+        }
+
+        #toast { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 30px; border-radius: 50px; font-size: 12px; font-weight: 800; z-index: 9999; display: none; }
     </style>
 </head>
 <body>
@@ -97,75 +98,64 @@
 <div id="app" class="app">
     <div id="toast"></div>
 
-    <!-- MODERN UPDATE UI -->
-    <div class="update-overlay" id="update-modal">
-        <div class="update-card">
-            <div class="update-icon" id="upd-icon">🚀</div>
-            <div id="update-info">
-                <h2 style="font-weight: 900; margin-bottom: 10px;">Update Sistem</h2>
-                <p id="update-desc" style="font-size: 13px; color: var(--gray); margin-bottom: 25px; line-height: 1.5;"></p>
-                <button class="btn-success" style="background: var(--primary); margin-bottom: 10px;" onclick="startDownload()">UNDUH & PASANG</button>
-                <button class="btn-main" onclick="document.getElementById('update-modal').style.display='none'" style="width:100%; background:#f1f5f9; color:var(--dark); padding:18px; border-radius:20px;">TUNDA</button>
+    <!-- UPDATE MODAL -->
+    <div class="overlay" id="update-modal" style="z-index:9999">
+        <div class="modal-card">
+            <div id="upd-init">
+                <div style="font-size:50px; margin-bottom:15px;">🚀</div>
+                <h2 style="font-weight:900;">Versi Baru Tersedia</h2>
+                <p id="update-desc" style="font-size:12px; color:var(--gray); margin:15px 0;"></p>
+                <button class="btn-success" style="background:var(--primary)" onclick="startDownload()">UNDUH & PASANG</button>
+                <button class="btn-success" onclick="document.getElementById('update-modal').style.display='none'" style="background:#f1f5f9; color:var(--dark); margin-top:10px;">TUNDA</button>
             </div>
-            <div class="download-box" id="download-box">
-                <p style="font-size: 11px; font-weight: 800; color: var(--gray); margin-bottom: 10px;" id="dl-status">MENYIAPKAN DATA...</p>
-                <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 15px;" id="dl-percentage">0%</h1>
-                <div class="progress-bg"><div class="progress-fill" id="dl-fill"></div></div>
+            <div id="upd-run" style="display:none">
+                <h1 id="dl-p" style="font-size:40px; font-weight:900; color:var(--primary);">0%</h1>
+                <p style="font-size:11px; font-weight:800; color:var(--gray); margin-top:15px;">MENGUNDUH DATA...</p>
             </div>
         </div>
     </div>
 
     <!-- HEADER -->
-    <header>
+    <header class="no-print">
         <div class="header-top">
             <div class="logo"><b>NAMA OUTLET ANDA</b></div>
-            <button id="bt-btn" class="bt-btn" onclick="connectBT()">🔗 CONNECT PRINTER</button>
+            <button id="bt-status" class="bt-btn" onclick="triggerConnect()">🔗 CONNECT PRINTER</button>
         </div>
-        <input type="text" id="search-input" class="search-input" placeholder="Cari nama menu..." oninput="renderMenu()">
+        <input type="text" id="search-input" class="search-box" placeholder="Cari minuman segar..." oninput="renderMenu()">
     </header>
 
-    <div class="tabs" id="tabs-container"></div>
-    <div id="menu-grid"></div>
+    <div class="tabs no-print" id="tabs-container"></div>
+    <div id="menu-grid" class="no-print"></div>
 
-    <!-- FLOATING BAR -->
-    <div id="cart-bar" class="floating-bar">
-        <div id="vertical-order-list" class="static-summary-list"></div>
+    <!-- BILL SUMMARY BAR -->
+    <div id="cart-bar" class="floating-bar no-print">
+        <div id="vertical-summary" class="summary-list"></div>
         <div class="bar-bottom">
-            <div onclick="toggleDrawer(true)" style="cursor: pointer;">
-                <p style="font-size: 9px; opacity: 0.6; font-weight: 900; letter-spacing: 1px;">TOTAL PEMBAYARAN</p>
+            <div>
+                <p style="font-size: 9px; opacity: 0.6; font-weight: 900;">TOTAL BAYAR</p>
                 <p id="total-price" style="font-size: 22px; font-weight: 900; color: var(--amber);"></p>
             </div>
-            <button class="btn-main" onclick="openPayment()">BAYAR SEKARANG</button>
+            <button class="btn-success" style="width:auto; padding:12px 25px;" onclick="openPayment()">BAYAR</button>
         </div>
     </div>
 
-    <!-- RUNNING TEXT -->
-    <div class="dev-marquee">
+    <!-- MARQUEE -->
+    <div class="dev-marquee no-print">
         <div class="marquee-content">
             <div class="marquee-text">DEV. ALWAN_VPN TERIMA JASA PEMBUATAN APLIKASI KASIR HUBUNGI <a href="https://wa.me/6281807151531" target="_blank">081807151531</a></div>
             <div class="marquee-text">DEV. ALWAN_VPN TERIMA JASA PEMBUATAN APLIKASI KASIR HUBUNGI <a href="https://wa.me/6281807151531" target="_blank">081807151531</a></div>
         </div>
     </div>
 
-    <!-- DRAWER & OTHER COMPONENTS (LOGIC SAMA) -->
-    <div class="drawer-overlay" id="overlay" onclick="toggleDrawer(false)"></div>
-    <div class="drawer" id="drawer">
-        <div style="padding:25px 20px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-            <h2 style="font-weight:900;">Rincian Pesanan</h2>
-            <button onclick="clearCart()" style="background:none; border:none; color:#ef4444; font-weight:bold; font-size:12px;">HAPUS SEMUA</button>
-        </div>
-        <div id="cart-list" style="flex:1; overflow-y:auto; padding:20px;"></div>
-        <div style="padding:20px;"><button class="btn-success" onclick="toggleDrawer(false)">SIMPAN</button></div>
-    </div>
-
-    <div class="payment-overlay" id="payment-page">
-        <div style="padding:20px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between;">
+    <!-- PAYMENT PAGE -->
+    <div class="payment-overlay no-print" id="payment-page">
+        <div style="padding:20px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; background:var(--dark); color:white;">
             <h2 style="font-weight: 900;">Pembayaran</h2>
-            <button onclick="closePayment()" style="background: none; border: none; font-size: 20px; font-weight: bold;">✕</button>
+            <button onclick="closePayment()" style="background:none; border:none; color:white; font-size:22px;">✕</button>
         </div>
         <div style="padding:20px; flex:1; overflow-y:auto;">
             <div class="bill-card">
-                <p style="font-size: 11px; font-weight: 800; color: var(--gray); margin-bottom: 5px;">BILL TOTAL</p>
+                <p style="font-size: 11px; font-weight: 800; color: var(--gray);">BILL TOTAL</p>
                 <h1 id="bill-total" style="font-size: 38px; font-weight: 900; color: var(--primary);"></h1>
             </div>
             <div class="quick-cash">
@@ -177,98 +167,88 @@
                 <button class="cash-btn" onclick="setCash(50000)">50.000</button>
                 <button class="cash-btn" onclick="setCash(100000)">100.000</button>
             </div>
-            <input type="number" id="cash-input" class="cash-input" placeholder="Input Nominal..." oninput="calcChange()">
+            <input type="number" id="cash-input" class="cash-input" placeholder="0" oninput="calcChange()">
             <div id="change-info" style="display:none; justify-content:space-between; background:#dcfce7; padding:20px; border-radius:20px; color:#166534; font-weight: 900; margin-bottom: 25px; border: 1px solid #10b981;">
                 <span>KEMBALIAN</span>
                 <span id="change-val"></span>
             </div>
-            <button id="finish-btn" class="btn-success" onclick="executeFinish()" disabled>KONFIRMASI LUNAS & PRINT</button>
+            <button id="finish-btn" class="btn-success" onclick="executeFinish()" disabled>KONFIRMASI LUNAS</button>
         </div>
     </div>
 
-    <div class="drawer-overlay" id="success-overlay" style="z-index:6000; display:none;">
-        <div class="success-card">
-            <div class="success-icon">✓</div>
-            <h2 style="font-weight: 900; margin-bottom: 5px; font-size: 22px;">TRANSAKSI LUNAS</h2>
-            <p style="font-size: 14px; color: var(--gray); margin-bottom: 25px;">Uang kembalian: <b id="final-change-text" style="color: var(--success)"></b></p>
-            <button class="btn-success" style="background:var(--dark); margin-bottom:12px;" onclick="printReceipt()">🖨️ CETAK STRUK THERMAL</button>
+    <!-- SUCCESS FINAL MODAL -->
+    <div class="overlay no-print" id="success-overlay" style="z-index:9000">
+        <div class="modal-card">
+            <div style="width:70px; height:70px; background:#ecfdf5; color:var(--success); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:30px; border: 4px solid #f0fdf4;">✓</div>
+            <h2 style="font-weight:900;">TRANSAKSI LUNAS</h2>
+            <p style="font-size:14px; color:var(--gray); margin-bottom:25px;">Kembalian: <b id="final-c" style="color:var(--success)"></b></p>
+            <button class="btn-success" style="background:var(--dark); margin-bottom:10px;" onclick="printBluetooth()">🖨️ PRINT BLUETOOTH (BLE)</button>
+            <button class="btn-success" style="background:#4f46e5; margin-bottom:10px;" onclick="window.print()">📄 PRINT SISTEM (STABIL)</button>
             <button class="btn-success" style="background:#f1f5f9; color:var(--dark);" onclick="resetApp()">PESANAN BARU</button>
         </div>
+    </div>
+
+    <!-- HIDDEN RECEIPT FOR SYSTEM PRINT -->
+    <div id="receipt-print">
+        <center>
+            <h2 id="r-title">NAMA OUTLET ANDA</h2>
+            <p id="r-date"></p>
+            <p>========================</p>
+        </center>
+        <div id="r-items"></div>
+        <p>------------------------</p>
+        <p id="r-total"></p>
+        <p id="r-cash"></p>
+        <p id="r-change"></p>
+        <center><p style="margin-top:20px;">TERIMA KASIH</p></center>
     </div>
 
 </div>
 
 <script>
-    // --- FIREBASE CONFIG (SCREENSHOT ANDA) ---
+    // --- FIREBASE CONFIG (Screenshot Ver) ---
     const firebaseConfig = {
         apiKey: "AIzaSyDf0eYAoS7FU5htyysnruX_E7d9fe9b2", 
         authDomain: "outlet-kasir.firebaseapp.com",
         projectId: "outlet-kasir",
-        storageBucket: "outlet-kasir.firebasestorage.app",
-        messagingSenderId: "641082330587",
-        appId: "1:641082330587:web:9fe9b26560721eb6", 
-        measurementId: "G-GN4QDZ5YWG",
         databaseURL: "https://outlet-kasir-default-rtdb.asia-southeast1.firebasedatabase.app"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    
-    // --- PENTING: LOGIKA UPDATE TANPA LOOP ---
-    const APP_VERSION = "1.0.0"; // Versi di kode
-    let global_latest_version = "";
+    const APP_VERSION = "1.0.0";
+    let cloudV = "";
 
-    function checkAppUpdate() {
+    // FORCE REALTIME LISTENER UNTUK UPDATE
+    function initUpdateListener() {
         db.ref('updateConfig').on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data) {
-                global_latest_version = data.latestVersion;
-                // Cek apakah versi cloud berbeda dengan versi lokal DAN belum pernah "dipasang" secara lokal
-                const lastInstalled = localStorage.getItem('installed_version');
-                
-                if (data.latestVersion !== APP_VERSION && data.latestVersion !== lastInstalled) {
-                    document.getElementById('update-modal').style.display = 'flex';
-                    document.getElementById('update-desc').innerText = `Versi ${data.latestVersion} tersedia!\n${data.changelog}`;
-                }
+            if(data && data.latestVersion !== APP_VERSION && data.latestVersion !== localStorage.getItem('v_inst')) {
+                cloudV = data.latestVersion;
+                document.getElementById('update-modal').style.display = 'flex';
+                document.getElementById('update-desc').innerText = data.changelog;
             }
         });
     }
 
     function startDownload() {
-        document.getElementById('update-info').style.display = 'none';
-        document.getElementById('download-box').style.display = 'block';
-        document.getElementById('upd-icon').innerText = '⏳';
-        
-        let progress = 0;
-        const bar = document.getElementById('dl-fill');
-        const text = document.getElementById('dl-percentage');
-        const status = document.getElementById('dl-status');
-
-        const interval = setInterval(() => {
-            if (progress >= 100) {
-                clearInterval(interval);
-                status.innerText = "MEMASANG SISTEM...";
-                
-                // CATAT BAHWA VERSI INI SUDAH DIPASANG DI HP INI
-                localStorage.setItem('installed_version', global_latest_version);
-                
-                setTimeout(() => {
-                    window.location.reload(true);
-                    window.location.href = window.location.pathname + "?v=" + new Date().getTime();
-                }, 1500);
+        document.getElementById('upd-init').style.display = 'none';
+        document.getElementById('upd-run').style.display = 'block';
+        let p = 0;
+        const iv = setInterval(() => {
+            if(p >= 100) {
+                clearInterval(iv);
+                localStorage.setItem('v_inst', cloudV);
+                location.reload(true);
             } else {
-                progress += Math.floor(Math.random() * 7) + 1;
-                if(progress > 100) progress = 100;
-                bar.style.width = progress + '%';
-                text.innerText = progress + '%';
-                if(progress > 40) status.innerText = "MENGUNDUH ASSET...";
-                if(progress > 80) status.innerText = "MENGOPTIMASI DATABASE...";
+                p += Math.floor(Math.random() * 8) + 1;
+                if(p > 100) p = 100;
+                document.getElementById('dl-p').innerText = p + '%';
             }
         }, 150);
     }
 
-    // --- LOGIKA KASIR (TETAP SAMA) ---
-    const menu = [
+    // --- POS DATA ---
+    const menuData = [
         { id: 1, name: 'Kopi Susu Aren Pro', price: 18000, cat: 'KOPI', img: 'https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=400' },
         { id: 2, name: 'Americano Ice Strong', price: 15000, cat: 'KOPI', img: 'https://images.pexels.com/photos/2615323/pexels-photo-2615323.jpeg?auto=compress&cs=tinysrgb&w=400' },
         { id: 3, name: 'Japanese Matcha Ice', price: 25000, cat: 'TEH', img: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=300' },
@@ -280,92 +260,144 @@
     ];
 
     let cart = [];
-    let currentCat = 'SEMUA';
+    let curCat = 'SEMUA';
     let btChar = null;
 
     function format(n) { return 'Rp ' + n.toLocaleString('id-ID'); }
-    function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000); }
-    function renderTabs() { const cats = ['SEMUA', 'KOPI', 'TEH', 'BOBA', 'SUSU', 'SNACK']; document.getElementById('tabs-container').innerHTML = cats.map(c => `<button class="tab ${currentCat === c ? 'active' : ''}" onclick="setCat('${c}')">${c}</button>`).join(''); }
-    function setCat(c) { currentCat = c; renderTabs(); renderMenu(); }
+    function toast(m) { const t = document.getElementById('toast'); t.innerText = m; t.style.display='block'; setTimeout(()=>t.style.display='none', 3000); }
+
+    function renderTabs() {
+        const cats = ['SEMUA', 'KOPI', 'TEH', 'BOBA', 'SUSU', 'SNACK'];
+        document.getElementById('tabs-container').innerHTML = cats.map(c => `<button class="tab ${curCat === c ? 'active' : ''}" onclick="setCat('${c}')">${c}</button>`).join('');
+    }
+    function setCat(c) { curCat = c; renderTabs(); renderMenu(); }
 
     function renderMenu() {
         const q = document.getElementById('search-input').value.toLowerCase();
-        const filtered = menu.filter(i => (currentCat === 'SEMUA' || i.cat === currentCat) && i.name.toLowerCase().includes(q));
-        document.getElementById('menu-grid').innerHTML = filtered.map(i => {
-            const inCart = cart.find(c => c.id === i.id);
-            const qty = inCart ? inCart.qty : 0;
+        const grid = document.getElementById('menu-grid');
+        const filtered = menuData.filter(i => (curCat === 'SEMUA' || i.cat === curCat) && i.name.toLowerCase().includes(q));
+        
+        grid.innerHTML = filtered.map(i => {
+            const itm = cart.find(c => c.id === i.id);
+            const qty = itm ? itm.qty : 0;
             return `
-                <div class="card" onclick="${qty === 0 ? `add(${i.id})` : ''}">
-                    <div class="img-box"><img src="${i.img}"><div class="price-badge">${format(i.price)}</div>
+                <div class="card" onclick="${qty === 0 ? `updateQ(${i.id}, 1)` : ''}">
+                    <div class="img-box">
+                        <img src="${i.img}">
+                        <div class="price-badge" style="${qty > 0 ? 'display:none' : ''}">${format(i.price)}</div>
                         <div class="qty-overlay ${qty > 0 ? 'show' : ''}">
                             <div class="qty-controls">
-                                <button class="q-btn" onclick="event.stopPropagation(); updateGridQty(${i.id}, -1)">-</button>
+                                <button class="q-btn" onclick="event.stopPropagation(); updateQ(${i.id}, -1)">-</button>
                                 <span style="font-size:24px; font-weight:900;">${qty}</span>
-                                <button class="q-btn" onclick="event.stopPropagation(); updateGridQty(${i.id}, 1)">+</button>
+                                <button class="q-btn" onclick="event.stopPropagation(); updateQ(${i.id}, 1)">+</button>
                             </div>
                         </div>
                     </div>
-                    <div class="card-info"><div class="card-name">${i.name}</div><div class="card-cat">${i.cat}</div></div>
+                    <div class="card-info"><div class="card-name">${i.name}</div></div>
                 </div>`;
         }).join('');
     }
 
-    function add(id) { const item = menu.find(i => i.id === id); cart.push({ ...item, qty: 1 }); updateBar(); }
-    function updateGridQty(id, val) { const idx = cart.findIndex(c => c.id === id); if (idx !== -1) { cart[idx].qty += val; if (cart[idx].qty <= 0) cart.splice(idx, 1); } updateBar(); }
+    function updateQ(id, v) {
+        const x = cart.findIndex(c => c.id === id);
+        if(x !== -1) { cart[x].qty += v; if(cart[x].qty <= 0) cart.splice(x, 1); }
+        else { const itm = menuData.find(m => m.id === id); cart.push({ ...itm, qty: 1 }); }
+        updateBar();
+    }
 
     function updateBar() {
         const bar = document.getElementById('cart-bar');
-        if (cart.length === 0) { bar.style.display = 'none'; renderMenu(); return; }
+        if(cart.length === 0) { bar.style.display = 'none'; renderMenu(); return; }
         bar.style.display = 'flex';
         const total = cart.reduce((a, b) => a + (b.price * b.qty), 0);
-        document.getElementById('vertical-order-list').innerHTML = cart.map(i => `<div class="summary-item">${i.name} <span>x${i.qty}</span></div>`).join('');
+        document.getElementById('vertical-summary').innerHTML = cart.map(i => `<div class="summary-item"><b>${i.name}</b> <span>x${i.qty}</span></div>`).join('');
         document.getElementById('total-price').innerText = format(total);
-        renderMenu(); renderCart();
+        renderMenu();
     }
 
-    function toggleDrawer(s) { document.getElementById('drawer').classList.toggle('open', s); document.getElementById('overlay').style.display = s ? 'block' : 'none'; }
-    function renderCart() { document.getElementById('cart-list').innerHTML = cart.map((i, idx) => `<div class="cart-item"><b>${i.name}</b> <div style="display:flex;gap:10px;"><button onclick="updateQty(${idx},-1)">-</button>${i.qty}<button onclick="updateQty(${idx},1)">+</button></div></div>`).join(''); }
-    function updateQty(idx, v) { cart[idx].qty += v; if (cart[idx].qty <= 0) cart.splice(idx, 1); updateBar(); }
-    function clearCart() { cart = []; updateBar(); toggleDrawer(false); }
+    // --- PAYMENT ---
+    function openPayment() {
+        const t = cart.reduce((a, b) => a + (b.price * b.qty), 0);
+        document.getElementById('bill-total').innerText = format(t);
+        document.getElementById('payment-page').style.display = 'flex';
+        document.getElementById('cash-input').value = '';
+        calcChange();
+    }
 
-    function openPayment() { const total = cart.reduce((a, b) => a + (b.price * b.qty), 0); document.getElementById('bill-total').innerText = format(total); document.getElementById('payment-page').style.display = 'flex'; document.getElementById('cash-input').value = ''; calcChange(); }
-    function setCash(v) { document.getElementById('cash-input').value = (v === 'pas' ? cart.reduce((a, b) => a + (b.price * b.qty), 0) : v); calcChange(); }
+    function setCash(v) {
+        const t = cart.reduce((a, b) => a + (b.price * b.qty), 0);
+        document.getElementById('cash-input').value = (v === 'pas' ? t : v);
+        calcChange();
+    }
 
     function calcChange() {
-        const total = cart.reduce((a, b) => a + (b.price * b.qty), 0);
-        const cashValue = parseInt(document.getElementById('cash-input').value) || 0;
+        const t = cart.reduce((a, b) => a + (b.price * b.qty), 0);
+        const c = parseInt(document.getElementById('cash-input').value) || 0;
         const info = document.getElementById('change-info');
         const btn = document.getElementById('finish-btn');
-        if (cashValue >= total && total > 0) { info.style.display = 'flex'; document.getElementById('change-val').innerText = format(cashValue - total); btn.disabled = false; } else { info.style.display = 'none'; btn.disabled = true; }
+        if(c >= t && t > 0) {
+            info.style.display = 'flex';
+            document.getElementById('change-val').innerText = format(c - t);
+            btn.disabled = false;
+        } else { info.style.display = 'none'; btn.disabled = true; }
+    }
+
+    function executeFinish() {
+        const t = cart.reduce((a, b) => a + (b.price * b.qty), 0);
+        const c = parseInt(document.getElementById('cash-input').value) || 0;
+        document.getElementById('final-c').innerText = format(c - t);
+        document.getElementById('success-overlay').style.display = 'flex';
+        // Fill system print data
+        document.getElementById('r-date').innerText = new Date().toLocaleString();
+        document.getElementById('r-items').innerHTML = cart.map(i => `<div style="display:flex;justify-content:space-between"><span>${i.qty}x ${i.name}</span><span>${format(i.price*i.qty)}</span></div>`).join('');
+        document.getElementById('r-total').innerText = "TOTAL: " + format(t);
+        document.getElementById('r-cash').innerText = "BAYAR: " + format(c);
+        document.getElementById('r-change').innerText = "KEMBALI: " + format(c-t);
     }
 
     function closePayment() { document.getElementById('payment-page').style.display = 'none'; }
-    function executeFinish() { const total = cart.reduce((a, b) => a + (b.price * b.qty), 0); const cashValue = parseInt(document.getElementById('cash-input').value) || 0; document.getElementById('final-change-text').innerText = format(cashValue - total); document.getElementById('success-overlay').style.display = 'block'; }
     function resetApp() { cart = []; updateBar(); document.getElementById('success-overlay').style.display = 'none'; closePayment(); }
 
+    // --- BLUETOOTH FIX ---
+    async function triggerConnect() {
+        if (!navigator.bluetooth) {
+            alert("SISTEM BLOKIR: APK Anda memblokir Bluetooth Hardware. Gunakan tombol 'PRINT SISTEM' nanti atau gunakan Browser CHROME.");
+            return;
+        }
+        connectBT();
+    }
+
     async function connectBT() {
+        toast("Scanning Printer...");
         try {
-            const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] });
+            const device = await navigator.bluetooth.requestDevice({
+                acceptAllDevices: true,
+                optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb']
+            });
             const server = await device.gatt.connect();
             const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
             btChar = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
-            document.getElementById('bt-btn').innerText = '🟢 READY';
-            document.getElementById('bt-btn').classList.add('on');
-            showToast('✅ Connected');
-        } catch (e) { showToast('❌ Gagal'); }
+            document.getElementById('bt-status').innerText = '🟢 READY';
+            document.getElementById('bt-status').classList.add('on');
+            toast('✅ Printer Terhubung!');
+        } catch (e) {
+            toast('❌ Gagal. Cek GPS!');
+        }
     }
 
-    async function printReceipt() {
-        if (!btChar) { showToast('Sambungkan Bluetooth!'); return; }
-        const total = cart.reduce((a, b) => a + (b.price * b.qty), 0);
-        const cashValue = document.getElementById('cash-input').value;
-        let t = "\x1B\x40\x1B\x61\x01** NAMA OUTLET **\n" + new Date().toLocaleString() + "\n----------------\n";
-        cart.forEach(i => t += `${i.qty}x ${i.name.substring(0,18)}\n   ${format(i.price*i.qty)}\n`);
-        t += "----------------\nTOTAL: " + format(total) + "\nBAYAR: " + format(parseInt(cashValue)) + "\nKEMBALI: " + format(cashValue-total) + "\n\nTERIMA KASIH\n\n\n\x1D\x56\x00";
-        await btChar.writeValue(new TextEncoder().encode(t));
+    async function printBluetooth() {
+        if(!btChar) { toast('Hubungkan Printer!'); return; }
+        const t = cart.reduce((a, b) => a + (b.price * b.qty), 0);
+        const c = parseInt(document.getElementById('cash-input').value);
+        let s = "\x1B\x40\x1B\x61\x01** OUTLET ANDA **\n" + new Date().toLocaleString() + "\n----------------\n";
+        cart.forEach(i => s += `${i.qty}x ${i.name.substring(0,18)}\n   ${format(i.price*i.qty)}\n`);
+        s += "----------------\nTOTAL: " + format(t) + "\nBAYAR: " + format(c) + "\nKEMBALI: " + format(c-t) + "\n\nTERIMA KASIH\n\n\n\n\n";
+        await btChar.writeValue(new TextEncoder().encode(s));
     }
 
-    renderTabs(); renderMenu(); checkAppUpdate();
+    // --- AUTO START ---
+    renderTabs(); renderMenu(); 
+    setTimeout(initUpdateListener, 1000);
 </script>
 </body>
 </html>
